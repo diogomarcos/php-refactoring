@@ -4,11 +4,21 @@ class MyUserClass
 {
     public function getUserList()
     {
-        $dbconn = new DatabaseConnection('localhost', 'user', 'password');
-        $results = $dbconn->query('select name from user');
+        $server_name = 'localhost';
+        $user_name = 'user';
+        $password = 'password';
+        $db_name = 'dbuser';
 
-        sort($results);
+        try {
+            $conn = new PDO("mysql:host=$server_name;dbname=$db_name", $user_name, $password);
+            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        return $results;
+            $stmt = $conn->query("SELECT `name` FROM use ORDER BY `name`");
+            $results = $stmt->setFetchMode(PDO::FETCH_ASSOC);
+
+            return $results;
+        } catch (PDOException $e) {
+            echo 'Error: ' . $e->getMessage();
+        }
     }
 }
